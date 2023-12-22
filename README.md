@@ -1,4 +1,4 @@
-# xmpp
+# octoprint xmpp plugin
 
 Connect to a xmmp server and sends printupdates
 
