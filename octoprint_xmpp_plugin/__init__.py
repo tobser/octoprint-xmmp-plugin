@@ -1,5 +1,6 @@
 import octoprint.plugin
 import asyncio, threading
+import re
 from datetime import datetime
 from slixmpp import ClientXMPP
 from slixmpp.exceptions import IqError, IqTimeout
@@ -17,10 +18,13 @@ class Xmpp(
 
     _con = None
     _eventLoop = None
+    _gcodeNotifications = dict ()
+    _gcodeRe = re.compile(r'{(?P<gc>.*)}{(?P<text>.*)}')
 
     def on_after_startup(self):
         self._logger.info("user: %s", self._settings.get(["jid"]))
         self._logger.info("to  : %s", self._settings.get(["to"]))
+        self.prepare_gcode_notifications()
 
         self.connect()
         if self._settings.get(["notify","server_start"]):
@@ -85,10 +89,47 @@ class Xmpp(
         n_password = self._settings.get(["password"])
         n_to = self._settings.get(["to"])
 
+        self.prepare_gcode_notifications()
+
         if self.connect():
             self.send_msg ("XMPP configuration saved ("
                                                       + datetime.now().strftime("%Y-%m-%d %H:%M:%S")
                                                       + ")")
+
+    def prepare_gcode_notifications(self):
+        _gcodeNotifications = dict ()
+        if not self._settings.get(["notify","gcodes"]):
+            self._logger.info("no custom gcode notifications configured")
+            return
+
+        gcodestr = self._settings.get(["notify","gcodes"])
+        if gcodestr == "":
+            self._logger.info("no gcode notifications configured")
+            return
+
+        lines = gcodestr.splitlines()
+        for l in lines:
+            self.add_gcode(l);
+
+
+    def add_gcode(self, line):
+        line = line.strip()
+        if line == "":
+            return
+
+        if line.startswith("#"):
+            self._logger.info("ignoring comment: %s", line)
+            return
+
+        match = self._gcodeRe.search(line)
+        if match is None:
+            self._logger.info("syntax error in line: %s", line)
+            return
+
+        code = match.group('gc')
+        text = match.group('text')
+        self._gcodeNotifications[code] = text
+        self._logger.info("gcode '%s' with notification text '%s' added", code, text)
 
     def get_settings_defaults(self):
         return dict(
@@ -100,7 +141,8 @@ class Xmpp(
                     server_start=False,
                     print_start=True,
                     print_end=True,
-                    percent_progress=10
+                    percent_progress=10,
+                    gcodes="#{M226}{Print paused}\n#{M600}{Filament change required}"
                     )
                 )
 
