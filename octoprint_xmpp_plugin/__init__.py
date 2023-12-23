@@ -131,6 +131,18 @@ class Xmpp(
         self._gcodeNotifications[code] = text
         self._logger.info("gcode '%s' with notification text '%s' added", code, text)
 
+    def on_gcode_sent(self, comm_instance, phase, cmd, cmd_type, gcode, *args, **kwargs):
+        if not cmd:
+            return
+
+        if not self._gcodeNotifications:
+            return
+
+        for code,text in self._gcodeNotifications.items():
+            if cmd.startswith(code):
+                self.send_msg(text)
+
+
     def get_settings_defaults(self):
         return dict(
                 jid="user@example.com",
@@ -189,8 +201,8 @@ class Xmpp(
             self.send_msg("Print {0} completed".format(path))
 
 
-    def get_update_information(*args, **kwargs):
-        self._logger.info("get_update_information")
+    def get_update_information(self, *args, **kwargs):
+        self._logger.info("return update information")
         return dict(
                 updateplugindemo=dict(
                     displayName=self._plugin_name,
@@ -204,9 +216,6 @@ class Xmpp(
                     )
                 )
 
-    __plugin_hooks__ = {
-            "octoprint.plugin.softwareupdate.check_config": get_update_information
-            }
 
 class XmppClient(ClientXMPP):
 
@@ -228,6 +237,17 @@ class XmppClient(ClientXMPP):
         if msg['type'] in ('chat', 'normal'):
             msg.reply("Thanks for sending\n%(body)s" % msg).send()
 
+def __plugin_load__():
+    plugin = Xmpp()
+
+    global __plugin_implementation__
+    __plugin_implementation__ = plugin
+
+    global __plugin_hooks__
+    __plugin_hooks__ = {
+            "octoprint.comm.protocol.gcode.sent": plugin.on_gcode_sent,
+            "octoprint.plugin.softwareupdate.check_config": plugin.get_update_information,
+            }
 
 __plugin_name__ = "XMPP Plugin"
 __plugin_pythoncompat__ = ">=3.7,<4"
