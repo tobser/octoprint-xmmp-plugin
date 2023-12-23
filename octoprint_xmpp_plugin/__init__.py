@@ -13,7 +13,7 @@ class Xmpp(
         octoprint.plugin.TemplatePlugin,
         octoprint.plugin.ProgressPlugin,
         octoprint.plugin.core.SortablePlugin,
-    ):
+        ):
 
     _con = None
     _eventLoop = None
@@ -87,22 +87,22 @@ class Xmpp(
 
         if self.connect():
             self.send_msg ("XMPP configuration saved ("
-                               + datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-                               + ")")
+                                                      + datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                                                      + ")")
 
     def get_settings_defaults(self):
         return dict(
-            jid="user@example.com",
-            to="user2@example.com",
-            password="",
-            notify=dict(
-                msg_prefix="",
-                server_start=False,
-                print_start=True,
-                print_end=True,
-                percent_progress=10
-            )
-        )
+                jid="user@example.com",
+                to="user2@example.com",
+                password="",
+                notify=dict(
+                    msg_prefix="",
+                    server_start=False,
+                    print_start=True,
+                    print_end=True,
+                    percent_progress=10
+                    )
+                )
 
     def get_settings_restricted_paths(self):
         return { 'user':[["jid"],["to"],["password"],], }
@@ -137,7 +137,6 @@ class Xmpp(
             self._logger.info("send message failed")
 
     def on_print_progress(self, storage, path, progress):
-
         percent = self._settings.get_int(["notify", "percent_progress"])
 
         if progress == 0 and self._settings.get(["notify", "print_start"]):
@@ -147,6 +146,25 @@ class Xmpp(
         if progress >= 100 and self._settings.get(["notify", "print_end"]):
             self.send_msg("Print {0} completed".format(path))
 
+
+    def get_update_information(*args, **kwargs):
+        self._logger.info("get_update_information")
+        return dict(
+                updateplugindemo=dict(
+                    displayName=self._plugin_name,
+                    displayVersion=self._plugin_version,
+
+                    type="github_release",
+                    current=self._plugin_version,
+                    user="tobser",
+                    repo="octoprint-xmpp-plugin",
+                    pip="https://github.com/tobser/octoprint-xmpp-plugin/archive/main.zip"
+                    )
+                )
+
+    __plugin_hooks__ = {
+            "octoprint.plugin.softwareupdate.check_config": get_update_information
+            }
 
 class XmppClient(ClientXMPP):
 
