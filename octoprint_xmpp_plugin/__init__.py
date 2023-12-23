@@ -186,18 +186,6 @@ class XmppClient(ClientXMPP):
         if msg['type'] in ('chat', 'normal'):
             msg.reply("Thanks for sending\n%(body)s" % msg).send()
 
-    def send_image_bob(self, jid, img_file_path):
-        m = self.Message()
-        m['to'] = jid
-        m['type'] = 'chat'
-        with open(img_file_path, 'rb') as img_file:
-            img = img_file.read()
-            if img:
-                cid = self['xep_0231'].set_bob(img, 'image/png')
-                m['body'] = 'Tried sending an image using HTML-IM + BOB'
-                m['html']['body'] = '<img src="cid:%s" />' % cid
-                m.send()
-
 
 __plugin_name__ = "XMPP Plugin"
 __plugin_pythoncompat__ = ">=3.7,<4"
