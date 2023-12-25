@@ -45,13 +45,16 @@
 		</div>
 	</div>
 	<div class="control-group">
-		<label class="control-label">{{ _('Send "Print progress update every " notifications. "0"=> no progress updates') }}</label>
+		<label class="control-label">{{ _('Send "Print progress" notifications. ') }}</label>
 		<div class="controls">
-			<input type="number" class="input-block-level" data-bind="value: settings.plugins.xmpp_plugin.notify.percent_progress">
+			<input type="number"  min=0 max=100 class="input" data-bind="value: settings.plugins.xmpp_plugin.notify.percent_progress">%<br />
+				{{ _('Sends a progress update notification every n%% of progress.
+				set to "0%%" to disable progress updates') }}
 		</div>
 	</div>
-
++
 	<h1>G-code notifications</h1>
+	<b> Danger Zone !!! This ist not very well testet at the moment. </b><br />
 	To add a gcode notification use the following format: '{gcode}{notifiaction message}'.<br />
 	Seperate multible gcode notifications with a newline.<br />
 	Lines starting with '#' are comments.<br />
@@ -59,5 +62,7 @@
 		class="block"
 		rows=10
 		data-bind="value: settings.plugins.xmpp_plugin.notify.gcodes"
-		></textarea>
+	></textarea>
 </form>
+
+<!-- vim:set ft=html " -->
