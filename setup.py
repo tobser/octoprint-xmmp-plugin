@@ -24,7 +24,7 @@ plugin_description = """Sends status updats to your jabber"""
 plugin_author = "Tobias Sachs"
 
 # The plugin's author's mail address.
-plugin_author_email = "octoprint-ts@ctsachs.de"
+plugin_author_email = "octo-eix9lim3-ts@ctsachs.de"
 
 # The plugin's homepage URL. Can be overwritten within OctoPrint's internal data via __plugin_url__ in the plugin module
 plugin_url = "https://github.com/tobser/octoprint-xmpp-plugin"
