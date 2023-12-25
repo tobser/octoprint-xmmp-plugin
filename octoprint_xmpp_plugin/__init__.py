@@ -154,7 +154,7 @@ class Xmpp(
                     print_start=True,
                     print_end=True,
                     percent_progress=10,
-                    gcodes="#{M226}{Print paused}\n#{M600}{Filament change required}"
+                    gcodes="#{M0}{Print paused}\n#{M600}{Change filament started}"
                     )
                 )
 
