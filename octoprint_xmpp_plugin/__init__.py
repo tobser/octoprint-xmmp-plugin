@@ -195,7 +195,7 @@ class Xmpp(
 
         if progress == 0 and self._settings.get(["notify", "print_start"]):
             self.send_msg("Print {0} started".format(path))
-        if percent > 0 and progress % percent == 0:
+        if percent > 0 and progress != 0 and progress % percent == 0:
             self.send_msg("{0}: {1}% complete".format(path, progress))
         if progress >= 100 and self._settings.get(["notify", "print_end"]):
             self.send_msg("Print {0} completed".format(path))
