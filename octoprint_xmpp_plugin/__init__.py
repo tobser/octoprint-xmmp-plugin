@@ -204,7 +204,7 @@ class Xmpp(
     def get_update_information(self, *args, **kwargs):
         self._logger.info("return update information")
         return dict(
-                updateplugindemo=dict(
+                xmpp_plugin=dict(
                     displayName=self._plugin_name,
                     displayVersion=self._plugin_version,
 
