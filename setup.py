@@ -18,7 +18,7 @@ plugin_version = "0.3.0"
 
 # The plugin's description. Can be overwritten within OctoPrint's internal data via __plugin_description__ in the plugin
 # module
-plugin_description = """Sends status updats to your jabber"""
+plugin_description = """Sends print progress updates to a xmpp account"""
 
 # The plugin's author. Can be overwritten within OctoPrint's internal data via __plugin_author__ in the plugin module
 plugin_author = "Tobias Sachs"
